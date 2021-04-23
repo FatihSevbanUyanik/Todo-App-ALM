@@ -1,11 +1,9 @@
+// config
+import './service/mongo'
+import keys from './util/keys';
+
 // imports
-import express from 'express';
-const app = express();
-
-// middlewares
-app.use(express.json());
-
-// routes
+import {app} from './app'
 
 // Exception catcher
 process.on('uncaughtException', err => {
@@ -14,6 +12,8 @@ process.on('uncaughtException', err => {
 })
 
 // Server Connection
-app.listen(8080, () => {
-   console.log(`Server running on Port ${8080}`)
+const server = app.listen(keys.SERVER_PORT, () => {
+   console.log(`Server running on Port ${keys.SERVER_PORT}`)
 })
+
+export { app, server }
