@@ -1,7 +1,6 @@
 // imports
 import cors from 'cors';
 import express from 'express';
-import keys from './util/keys';
 import { globalErrorHandler } from './util/errorHandling';
 const app = express();
 
