@@ -40,6 +40,7 @@ jobs:
       if: github.ref == 'refs/heads/master'
       steps:
         - uses: actions/checkout@v2
+        - uses: filipstefansson/uuid-action@v1
         - run: zip -r deploy.zip Dockerrun.aws.json
         - uses: einaregilsson/beanstalk-deploy@v10
           with:

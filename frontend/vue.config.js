@@ -1,9 +1,12 @@
 module.exports = {
-    devServer: {
-        disableHostCheck: true,
-        port: 8081,
-        watchOptions: {
-            poll: true,
-        },
+  transpileDependencies: [
+    'vuetify'
+  ],
+  devServer: {
+    disableHostCheck: true, 
+    port: 8081,
+    watchOptions: {
+      poll: true,
     },
+  },
 }
