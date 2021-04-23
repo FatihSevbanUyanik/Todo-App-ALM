@@ -1,0 +1,52 @@
+name: tests
+
+on: [push, pull_request]
+    
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: cd backend && npm install && npm run test
+        
+  test-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: cd frontend && npm install && npm audit fix && npm run test:unit
+
+  deploy-images-to-dockerhub:
+    runs-on: ubuntu-latest
+    needs: [test-backend, test-frontend]
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v2
+      - run: cd backend && docker build -t fatihsevban/todo-backend .      
+      - run: cd frontend && docker build -t fatihsevban/todo-frontend .   
+      - run: cd nginx && docker build -t fatihsevban/todo-nginx .
+      - run: docker login -u $DOCKER_ID -p $DOCKER_PASSWORD
+        env:
+            DOCKER_ID: ${{ secrets.DOCKER_ID }}             
+            DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }} 
+      - run: docker push fatihsevban/todo-backend
+      - run: docker push fatihsevban/todo-frontend
+      - run: docker push fatihsevban/todo-nginx
+    
+  deploy-to-ebs:
+      runs-on: ubuntu-latest
+      needs: [deploy-images-to-dockerhub]
+      if: github.ref == 'refs/heads/master'
+      steps:
+        - uses: actions/checkout@v2
+        - run: zip -r deploy.zip Dockerrun.aws.json
+        - uses: einaregilsson/beanstalk-deploy@v10
+          with:
+              aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+              aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+              application_name: todo-app
+              environment_name: Todoapp-env-3
+              region: "eu-central-1"
+              version_label: "todo-app-${{ steps.generate-uuid.outputs.uuid }}" 
+              deployment_package: deploy.zip
