@@ -1,5 +1,6 @@
 <template>
    <v-container class="mx-auto px-4">
+      <h1 class="text-center">Awesome Todo Application</h1> 
       <v-row>
          <v-col class="col-md-8 offset-md-2">
             <v-card outlined class="mt-6 pa-3 elevation-1">

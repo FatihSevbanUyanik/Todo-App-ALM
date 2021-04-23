@@ -49,5 +49,5 @@ jobs:
               application_name: todo-app
               environment_name: Todoapp-env-3
               region: "eu-central-1"
-              version_label: "todo-app-${{ steps.generate-uuid.outputs.uuid }}" 
+              version_label: "todo-app-3" 
               deployment_package: deploy.zip
